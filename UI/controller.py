@@ -11,10 +11,19 @@ class Controller:
         self._model = model
         self._idMap = {}
         self.fillIDMap()
+        self._nerc = None
 
     def handleWorstCase(self, e):
-        # TO FILL
-        pass
+        self.get_nerc()
+        try:
+            anni_X = int(self._view._txtYears.value)
+            ore_Y = float(self._view._txtHours.value)
+            #print(self._nerc, anni_X, ore_Y)
+            ottime = self._model.worstCase(self._nerc, anni_X, ore_Y)
+        except ValueError:
+            self._view.create_alert("Inserire dei numeri")
+
+
 
     def fillDD(self):
         nercList = self._model.listNerc
@@ -27,3 +36,6 @@ class Controller:
         values = self._model.listNerc
         for v in values:
             self._idMap[v.value] = v
+
+    def get_nerc(self):
+        self._nerc = self._idMap[self._view._ddNerc.value]

@@ -14,6 +14,11 @@ class Event:
     _date_event_finished: datetime
     _demand_loss: int
 
+
+    def set_durata(self):
+        self._durata = self.date_event_finished - self.date_event_began
+        self._durata = self._durata.seconds
+
     @property
     def id(self):
         return self._id
@@ -59,7 +64,7 @@ class Event:
         #         f"start_time={self._date_event_began}, end_time= {self._date_event_finished}]")
 
         return (f"id={self._id}, customers_affected={self._customers_affected} "
-                f"start_time={self._date_event_began}, end_time= {self._date_event_finished}")
+                f"start_time={self._date_event_began}, end_time= {self._date_event_finished}, durata={self._durata}")
 
     def __hash__(self):
         return hash(self._id)
