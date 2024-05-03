@@ -16,7 +16,7 @@ class Event:
 
 
     def set_durata(self):
-        self._durata = (self.date_event_finished - self.date_event_began).total_seconds()
+        self._durata = (self.date_event_finished - self.date_event_began).total_seconds() / 3600
 
 
     @property

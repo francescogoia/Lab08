@@ -1,3 +1,5 @@
+import time
+
 import flet as ft
 
 from model.nerc import Nerc
@@ -18,8 +20,16 @@ class Controller:
         try:
             anni_X = int(self._view._txtYears.value)
             ore_Y = float(self._view._txtHours.value)
-            #print(self._nerc, anni_X, ore_Y)
+            start = time.time()
             ottime = self._model.worstCase(self._nerc, anni_X, ore_Y)
+            self._view._txtOut.controls.append(ft.Text(f"Tot people affected: {ottime[0]}"))
+            self._view._txtOut.controls.append(ft.Text(f"Tot hours of outage: {ottime[1]}"))
+            for i in ottime[2]:
+                self._view._txtOut.controls.append(ft.Text(f"{i}"))
+            self._view.update_page()
+            end = time.time()
+            print("Ricorsioni: ", self._model.N_ricorsioni)
+            print("Tempo: ", (end - start))
         except ValueError:
             self._view.create_alert("Inserire dei numeri")
 
