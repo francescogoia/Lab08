@@ -14,14 +14,15 @@ class Model:
         self._possibili_soluzioni = []
         self.N_ricorsioni = 0
         self.N_soluzioni = 0
-        self.N_ricorsioni_vecchie = 0
-        self.N_soluzioni_vecchie = 0
-        self._possibili_soluzioni_vecchie = []
+        self._pop_best = 0
+        #self.N_ricorsioni_vecchie = 0
+        #self.N_soluzioni_vecchie = 0
+        #self._possibili_soluzioni_vecchie = []
 
     def worstCase(self, nerc, maxY, maxH):
         self.loadEvents(nerc)
         min_data = datetime.datetime(2015, 12, 25, 15, 42, 21)
-        self.ricorsione([], maxY, maxH, 0, 0, min_data)
+        self.ricorsione([], maxY, maxH, 0, 0, min_data, 0)
 
         ottima = self.get_max()
         print(ottima[0], ottima[1])
@@ -37,17 +38,13 @@ class Model:
         """
         return ottima
 
-    def ricorsione(self, parziale, maxY, maxH, pos, durata_tot, min_data):
+    def ricorsione(self, parziale, maxY, maxH, pos, durata_tot, min_data, popolazione):
         self.N_ricorsioni += 1
         if pos == len(self._listEvents):
             self.N_soluzioni += 1
-            popolazione = 0
-            ore = 0
-            for event in parziale:
-                popolazione += event.customers_affected
-                ore += event._durata
-            self._possibili_soluzioni.append((popolazione, ore, copy.deepcopy(parziale)))
-        #    print(parziale)
+            if popolazione > self._pop_best:
+                self._pop_best = popolazione
+                self._possibili_soluzioni.append((popolazione, durata_tot, copy.deepcopy(parziale)))
         else:
             for event in self._listEvents[pos: ]:
                 pos += 1
@@ -56,7 +53,11 @@ class Model:
                 if res_filtro[0] == True:
                     durata_tot1 = res_filtro[1]
                     min_data1 = res_filtro[2]
-                    self.ricorsione(parziale, maxY, maxH, pos, durata_tot1, min_data1)
+                    popolazione += event.customers_affected
+                    if popolazione < self._pop_best:
+                        return
+                    else:
+                        self.ricorsione(parziale, maxY, maxH, pos, durata_tot1, min_data1, popolazione)
 
                 parziale.pop()
 
