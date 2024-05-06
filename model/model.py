@@ -39,6 +39,12 @@ class Model:
         return ottima
 
     def ricorsione(self, parziale, maxY, maxH, pos, durata_tot, min_data, popolazione):
+        pop_rimanente = 0
+        for e in self._listEvents[pos: ]:
+            pop_rimanente += e.customers_affected
+        popolazione = 0
+        for e in parziale:
+            popolazione += e.customers_affected
         self.N_ricorsioni += 1
         if pos == len(self._listEvents):
             self.N_soluzioni += 1
@@ -53,8 +59,9 @@ class Model:
                 if res_filtro[0] == True:
                     durata_tot1 = res_filtro[1]
                     min_data1 = res_filtro[2]
+
                     popolazione += event.customers_affected
-                    if popolazione < self._pop_best:
+                    if (pop_rimanente + popolazione) < self._pop_best:
                         return
                     else:
                         self.ricorsione(parziale, maxY, maxH, pos, durata_tot1, min_data1, popolazione)
